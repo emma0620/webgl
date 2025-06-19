@@ -96,16 +96,16 @@
         var isFloorVisible = true;
         document.getElementById('btn-floor').addEventListener('click', function () {
           isFloorVisible = !isFloorVisible;
-          ReceiveJSMethod('DisplayFloor', String(isFloorVisible));
+          ReceiveJSMethod('DisplayFloor');
         });
         document.getElementById('btn-zoom').addEventListener('click', function () {
-          ReceiveJSMethod('Zoom', '');
+          ReceiveJSMethod('Zoom');
         });
         document.getElementById('btn-reset').addEventListener('click', function () {
-          ReceiveJSMethod('ResetCamera', ''); // 傳遞空字串
+          ReceiveJSMethod('ResetCamera'); // 傳遞空字串
         });
         document.getElementById('btn-warn').addEventListener('click', function () {
-          ReceiveJSMethod('SetWarning', '');
+          ReceiveJSMethod('SetWarning');
         });
 
       }).catch((message) => {
