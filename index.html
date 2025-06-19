@@ -123,9 +123,9 @@
       if (methodName != null) {
         if (message != null) { // 注意：廠商原始碼這裡只檢查了 null
           var base64Str = btoa(encodeURIComponent(message).replace(/%([0-9A-F]{2})/g, function (match, p1) { return String.fromCharCode("0x" + p1); }));
-          unityIns.SendMeZssage("cube", methodName, base64Str);
+          unityIns.SendMeZssage("Cube", methodName, base64Str);
         } else {
-          unityIns.SendMessage("cube", methodName);
+          unityIns.SendMessage("Cube", methodName);
         }
       }
     }
