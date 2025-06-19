@@ -25,6 +25,8 @@
     </div>
     <script>
 
+      
+
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
@@ -158,6 +160,31 @@
                 }
             }
         }
+
+        // ===========================================
+          //         在這裡貼上新的 postMessage 監聽器
+          // ===========================================
+          window.addEventListener('message', function (event) {
+            const allowedOrigins = [
+              'http://localhost:8081',
+              'https://YOUR_VUE_APP_PRODUCTION_DOMAIN.com'
+            ];
+
+            if (!allowedOrigins.includes(event.origin)) {
+              console.warn('忽略了來自不信任來源的訊息:', event.origin);
+              return;
+            }
+
+            const data = event.data;
+            if (data && typeof data.methodName === 'string') {
+              console.log('透過 postMessage 收到指令，正在轉發給 Unity:', data);
+              if (typeof ReceiveJSMethod === 'function') {
+                ReceiveJSMethod(data.methodName, data.message || "");
+              } else {
+                console.error('錯誤：Unity 的 ReceiveJSMethod 函式尚未準備好。');
+              }
+            }
+          });
     </script>
   </body>
 </html>
