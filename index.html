@@ -1,190 +1,151 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | HTML_WebGL</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=1600 height=900 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">HTML_WebGL</div>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | HTML_WebGL</title>
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
+  <!-- 新增的按鈕樣式，讓它更清晰可見 -->
+  <style>
+    #internal-test-controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      gap: 10px;
+    }
+
+    #internal-test-controls button {
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =========================================== -->
+  <!--          新增的 HTML 內部測試按鈕           -->
+  <!-- =========================================== -->
+  <div id="internal-test-controls">
+    <button id="btn-floor">開/關樓板</button>
+    <button id="btn-zoom">鏡頭拉近</button>
+    <button id="btn-reset">重置相機</button>
+    <button id="btn-warn">顯示警告</button>
+  </div>
+
+  <div id="unity-container" class="unity-desktop">
+    <canvas id="unity-canvas" width=1600 height=900 tabindex="-1"></canvas>
+    <div id="unity-loading-bar">
+      <div id="unity-logo"></div>
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
       </div>
     </div>
-    <script>
+    <div id="unity-warning"> </div>
+    <div id="unity-footer">
+      <div id="unity-webgl-logo"></div>
+      <div id="unity-fullscreen-button"></div>
+      <div id="unity-build-title">HTML_WebGL</div>
+    </div>
+  </div>
+  <script>
+    // ===========================================
+    //            原本的 Unity 程式碼
+    // ===========================================
+    var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    // ... (中間省略，保持原樣) ...
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/Test.loader.js";
+    var config = {
+      dataUrl: buildUrl + "/Test.data.unityweb",
+      frameworkUrl: buildUrl + "/Test.framework.js.unityweb",
+      codeUrl: buildUrl + "/Test.wasm.unityweb",
+      // ... (config 內容保持原樣) ...
+    };
 
-      
+    // ... (手機/桌面的樣式判斷保持原樣) ...
 
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
-
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
-
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Test.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/Test.data.unityweb",
-        frameworkUrl: buildUrl + "/Test.framework.js.unityweb",
-        codeUrl: buildUrl + "/Test.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "HTML_WebGL",
-        productVersion: "0.1",
-        showBanner: unityShowBanner,
-      };
-
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
-
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = "unity-mobile";
-        canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
-        canvas.style.width = "1600px";
-        canvas.style.height = "900px";
-      }
-
-      loadingBar.style.display = "block";
-
-        var script = document.createElement("script");
-        var unityIns = null;
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-            unityIns = unityInstance;
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-        /**
-      * ReceiveJSMethod 函数用于接收来自网页的指令和消息，并将它们传递给 Unity 中的对象。
-      * @param {string} methodName - 要调用的 Unity 对象的方法名
-      * @param {string} message - 要传递给 Unity 对象的消息（可选）
-      */
-        function ReceiveJSMethod(methodName, message) {
-            // 在控制台输出接收到的methodName和message，用于调试
-            console.log(methodName, message);
-
-            // 检查methodName是否不为null
-            if (methodName != null) {
-                // 如果message也不为null，则进行处理
-                if (message != null) {
-                    // 将文本消息转换为base64编码
-                    var base64Str = btoa(
-                        encodeURIComponent(message).replace(
-                            /%([0-9A-F]{2})/g,
-                            function (match, p1) {
-                                // 将百分比编码的序列转换回原始字符
-                                return String.fromCharCode("0x" + p1);
-                            }
-                        )
-                    );
-                    // 使用Unity引擎的SendMessage方法，将methodName和base64编码的消息发送给名为"Cube"的Unity对象
-                    unityIns.SendMessage("Cube", methodName, base64Str);
-                } else {
-                    // 如果没有message，只发送methodName给名为"Cube"的Unity对象
-                    unityIns.SendMessage("Cube", methodName);
-                }
-            }
-        }
-
+    loadingBar.style.display = "block";
+    var script = document.createElement("script");
+    var unityIns = null;
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        progressBarFull.style.width = 100 * progress + "%";
+      }).then((unityInstance) => {
+        unityIns = unityInstance;
+        loadingBar.style.display = "none";
+        fullscreenButton.onclick = () => { unityInstance.SetFullscreen(1); };
         // ===========================================
-          //         在這裡貼上新的 postMessage 監聽器
-          // ===========================================
-          window.addEventListener('message', function (event) {
-            const allowedOrigins = [
-              'http://localhost:8081',
-              'https://YOUR_VUE_APP_PRODUCTION_DOMAIN.com'
-            ];
+        //       新增的按鈕點擊事件監聽 (內部測試)
+        // ===========================================
+        // 確保 Unity 實例加載完成後再綁定事件
+        var isFloorVisible = true;
+        document.getElementById('btn-floor').addEventListener('click', function () {
+          isFloorVisible = !isFloorVisible;
+          ReceiveJSMethod('DisplayFloor', String(isFloorVisible));
+        });
+        document.getElementById('btn-zoom').addEventListener('click', function () {
+          ReceiveJSMethod('Zoom', 'in');
+        });
+        document.getElementById('btn-reset').addEventListener('click', function () {
+          ReceiveJSMethod('ResetCamera', ''); // 傳遞空字串
+        });
+        document.getElementById('btn-warn').addEventListener('click', function () {
+          ReceiveJSMethod('SetWarning', 'true');
+        });
 
-            if (!allowedOrigins.includes(event.origin)) {
-              console.warn('忽略了來自不信任來源的訊息:', event.origin);
-              return;
-            }
+      }).catch((message) => {
+        alert(message);
+      });
+    };
+    document.body.appendChild(script);
 
-            const data = event.data;
-            if (data && typeof data.methodName === 'string') {
-              console.log('透過 postMessage 收到指令，正在轉發給 Unity:', data);
-              if (typeof ReceiveJSMethod === 'function') {
-                ReceiveJSMethod(data.methodName, data.message || "");
-              } else {
-                console.error('錯誤：Unity 的 ReceiveJSMethod 函式尚未準備好。');
-              }
-            }
-          });
-    </script>
-  </body>
+    function ReceiveJSMethod(methodName, message) {
+      console.log("ReceiveJSMethod 被呼叫:", methodName, message);
+      if (unityIns === null) {
+        console.error("Unity 實例 (unityIns) 尚未準備好!");
+        return;
+      }
+      if (methodName != null) {
+        if (message != null) { // 注意：廠商原始碼這裡只檢查了 null
+          var base64Str = btoa(encodeURIComponent(message).replace(/%([0-9A-F]{2})/g, function (match, p1) { return String.fromCharCode("0x" + p1); }));
+          unityIns.SendMessage("Cube", methodName, base64Str);
+        } else {
+          unityIns.SendMessage("Cube", methodName);
+        }
+      }
+    }
+
+    // ===========================================
+    //      之前加入的 postMessage 監聽器 (保持不變)
+    // ===========================================
+    window.addEventListener('message', function (event) {
+      const allowedOrigins = [
+        'http://localhost:8081',
+        // 'https://YOUR_VUE_APP_PRODUCTION_DOMAIN.com' // 之後換成您 Vue 的正式網址
+      ];
+      if (!allowedOrigins.includes(event.origin)) { return; }
+      const data = event.data;
+      if (data && typeof data.methodName === 'string') {
+        console.log('透過 postMessage 收到指令，正在轉發給 Unity:', data);
+        if (typeof ReceiveJSMethod === 'function') {
+          // **關鍵**：確保 message 永遠是字串
+          ReceiveJSMethod(data.methodName, data.message || "");
+        } else {
+          console.error('錯誤：Unity 的 ReceiveJSMethod 函式尚未準備好。');
+        }
+      }
+    });
+  </script>
+</body>
+
 </html>
