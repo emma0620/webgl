@@ -99,13 +99,13 @@
           ReceiveJSMethod('DisplayFloor', String(isFloorVisible));
         });
         document.getElementById('btn-zoom').addEventListener('click', function () {
-          ReceiveJSMethod('Zoom', 'in');
+          ReceiveJSMethod('Zoom', '');
         });
         document.getElementById('btn-reset').addEventListener('click', function () {
           ReceiveJSMethod('ResetCamera', ''); // 傳遞空字串
         });
         document.getElementById('btn-warn').addEventListener('click', function () {
-          ReceiveJSMethod('SetWarning', 'true');
+          ReceiveJSMethod('SetWarning', '');
         });
 
       }).catch((message) => {
