@@ -85,7 +85,7 @@
             updateBannerVisibility();
           }
 
-  // --- 複製結束 ---
+  
     var buildUrl = "Build";
     var loaderUrl = buildUrl + "/Test.loader.js";
     var config = {
@@ -167,9 +167,9 @@
       if (methodName != null) {
         if (message != null) { // 注意：廠商原始碼這裡只檢查了 null
           var base64Str = btoa(encodeURIComponent(message).replace(/%([0-9A-F]{2})/g, function (match, p1) { return String.fromCharCode("0x" + p1); }));
-          unityIns.SendMessage("Cube", methodName, base64Str);
+          unityIns.SendMessage("Manager", methodName, base64Str);
         } else {
-          unityIns.SendMessage("Cube", methodName);
+          unityIns.SendMessage("Manager", methodName);
         }
       }
     }
@@ -190,7 +190,7 @@
           // **關鍵**：確保 message 永遠是字串
           ReceiveJSMethod(data.methodName, data.message || "");
         } else {
-          console.error('錯誤：Unity 的 ReceiveJSMethod 函式尚未準備好。');
+          console.error('錯誤:Unity 的 ReceiveJSMethod 函式尚未準備好。');
         }
       }
     });
