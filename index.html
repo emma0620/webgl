@@ -178,11 +178,12 @@
     //      之前加入的 postMessage 監聽器 (保持不變)
     // ===========================================
     window.addEventListener('message', function (event) {
-      const allowedOrigins = [
-        'http://localhost:8081',
+    //  const allowedOrigins = [
+        
+     //   'http://localhost:8081',
         // 'https://YOUR_VUE_APP_PRODUCTION_DOMAIN.com' // 之後換成您 Vue 的正式網址
-      ];
-      if (!allowedOrigins.includes(event.origin)) { return; }
+    //  ];
+   //   if (!allowedOrigins.includes(event.origin)) { return; }
       const data = event.data;
       if (data && typeof data.methodName === 'string') {
         console.log('透過 postMessage 收到指令，正在轉發給 Unity:', data);
